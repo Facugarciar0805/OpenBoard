@@ -443,7 +443,6 @@ bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pre
             }
 
             width /= UBApplication::boardController->systemScaleFactor();
-            width /= UBApplication::boardController->currentZoom();
 
             mAddedItems.clear();
             mRemovedItems.clear();
@@ -473,7 +472,6 @@ bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pre
 
             qreal eraserWidth = UBSettings::settings()->currentEraserWidth();
             eraserWidth /= UBApplication::boardController->systemScaleFactor();
-            eraserWidth /= UBApplication::boardController->currentZoom();
 
             eraseLineTo(scenePos, eraserWidth);
             drawEraser(scenePos, mInputDeviceIsPressed);
@@ -543,7 +541,6 @@ bool UBGraphicsScene::inputDeviceMove(const QPointF& scenePos, const qreal& pres
             }
 
             width /= UBApplication::boardController->systemScaleFactor();
-            width /= UBApplication::boardController->currentZoom();
 
             std::optional<QPointF> altPosition;
 
@@ -668,7 +665,6 @@ bool UBGraphicsScene::inputDeviceMove(const QPointF& scenePos, const qreal& pres
         {
             qreal eraserWidth = UBSettings::settings()->currentEraserWidth();
             eraserWidth /= UBApplication::boardController->systemScaleFactor();
-            eraserWidth /= UBApplication::boardController->currentZoom();
 
             eraseLineTo(position, eraserWidth);
         }
@@ -804,7 +800,6 @@ void UBGraphicsScene::drawEraser(const QPointF &pPoint, bool pressed)
     if (mEraser) {
         qreal eraserWidth = UBSettings::settings()->currentEraserWidth();
         eraserWidth /= UBApplication::boardController->systemScaleFactor();
-        eraserWidth /= UBApplication::boardController->currentZoom();
 
         qreal eraserRadius = eraserWidth / 2;
 
@@ -858,7 +853,6 @@ void UBGraphicsScene::drawMarkerCircle(const QPointF &pPoint)
     if (mMarkerCircle) {
         qreal markerDiameter = UBSettings::settings()->currentMarkerWidth();
         markerDiameter /= UBApplication::boardController->systemScaleFactor();
-        markerDiameter /= UBApplication::boardController->currentZoom();
         qreal markerRadius = markerDiameter/2;
 
         mMarkerCircle->setRect(QRectF(pPoint.x() - markerRadius, pPoint.y() - markerRadius,
@@ -876,7 +870,6 @@ void UBGraphicsScene::drawPenCircle(const QPointF &pPoint)
         UBSettings::settings()->currentPenWidth() >= UBSettings::settings()->penPreviewFromSize->get().toInt()) {
         qreal penDiameter = UBSettings::settings()->currentPenWidth();
         penDiameter /= UBApplication::boardController->systemScaleFactor();
-        penDiameter /= UBApplication::boardController->currentZoom();
         qreal penRadius = penDiameter/2;
 
         mPenCircle->setRect(QRectF(pPoint.x() - penRadius, pPoint.y() - penRadius,
@@ -1134,7 +1127,6 @@ void UBGraphicsScene::drawArcTo(const QPointF& pCenterPoint, qreal pSpanAngle)
     }
     qreal penWidth = UBSettings::settings()->currentPenWidth();
     penWidth /= UBApplication::boardController->systemScaleFactor();
-    penWidth /= UBApplication::boardController->currentZoom();
 
     mArcPolygonItem = arcToPolygonItem(QLineF(pCenterPoint, mPreviousPoint), pSpanAngle, penWidth);
     mArcPolygonItem->setFillRule(Qt::WindingFill);
