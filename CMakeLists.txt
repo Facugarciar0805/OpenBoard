@@ -34,10 +34,14 @@ project(openboard
     VERSION ${VERSION_NUMBER}
     DESCRIPTION "OpenBoard is an open source cross-platform interactive white board application designed primarily for use in schools. It was originally forked from Open-Sankoré, which was itself based on Uniboard."
     HOMEPAGE_URL "https://www.openboard.org"
-    LANGUAGES CXX
+    LANGUAGES CXX OBJCXX
 )
 
 add_compile_definitions(UBVERSION="${VERSION}")
+
+if(APPLE)
+    add_compile_definitions(Q_WS_MACX)
+endif()
 
 
 # ==========================================================================
@@ -115,7 +119,21 @@ include(cmake/DependencyPoppler.cmake)
 include(cmake/DependencyZlib.cmake)
 include(cmake/DependencyQuaZip.cmake)
 include(cmake/DependencyFFmpeg.cmake)
-include(cmake/DependencyPipewire.cmake)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    include(cmake/DependencyPipewire.cmake)
+endif()
+
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME}
+        "-framework Foundation"
+        "-framework Cocoa"
+        "-framework Carbon"
+        "-framework AVFoundation"
+        "-framework CoreMedia"
+        "-framework CoreServices"
+        "-framework ApplicationServices"
+    )
+endif()
 
 # add source path to include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
