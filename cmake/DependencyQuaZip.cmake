@@ -3,6 +3,13 @@
 find_package(QuaZip-Qt${QT_VERSION} 1.0 QUIET)
 
 if(QuaZip-Qt${QT_VERSION}_FOUND)
+    if(TARGET QuaZip::QuaZip)
+        get_target_property(_quazip_link_libs QuaZip::QuaZip INTERFACE_LINK_LIBRARIES)
+        if(_quazip_link_libs)
+            string(REGEX REPLACE "/Applications/Xcode[^;]*libbz2\\.tbd" "-lbz2" _quazip_link_libs "${_quazip_link_libs}")
+            set_target_properties(QuaZip::QuaZip PROPERTIES INTERFACE_LINK_LIBRARIES "${_quazip_link_libs}")
+        endif()
+    endif()
     target_link_libraries(openboard
         QuaZip::QuaZip
     )

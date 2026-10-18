@@ -29,4 +29,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
         UBPipewireSink.h
         UBPlatformUtils_linux.cpp
     )
+elseif(APPLE)
+    target_sources(openboard PRIVATE
+        UBPlatformUtils_mac.mm
+    )
 endif()

@@ -107,4 +107,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     target_sources(openboard PRIVATE
         UBKeyboardPalette_linux.cpp
     )
+elseif(APPLE)
+    target_sources(openboard PRIVATE
+        UBKeyboardPalette_mac.mm
+    )
 endif()
