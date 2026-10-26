@@ -92,7 +92,9 @@ class UBSettings : public QObject
         // Eraser related
         int eraserWidthIndex();
         qreal eraserFineWidth();
+        qreal eraserMediumFineWidth();
         qreal eraserMediumWidth();
+        qreal eraserMediumStrongWidth();
         qreal eraserStrongWidth();
         qreal currentEraserWidth();
 
@@ -288,11 +290,15 @@ class UBSettings : public QObject
         UBSetting* appStartupHintsEnabled;
 
         UBSetting* boardPenFineWidth;
+        UBSetting* boardPenMediumFineWidth;
         UBSetting* boardPenMediumWidth;
+        UBSetting* boardPenMediumStrongWidth;
         UBSetting* boardPenStrongWidth;
 
         UBSetting* boardMarkerFineWidth;
+        UBSetting* boardMarkerMediumFineWidth;
         UBSetting* boardMarkerMediumWidth;
+        UBSetting* boardMarkerMediumStrongWidth;
         UBSetting* boardMarkerStrongWidth;
 
         UBSetting* boardPenPressureSensitive;
@@ -455,7 +461,9 @@ class UBSettings : public QObject
 
         void setEraserWidthIndex(int index);
         void setEraserFineWidth(qreal width);
+        void setEraserMediumFineWidth(qreal width);
         void setEraserMediumWidth(qreal width);
+        void setEraserMediumStrongWidth(qreal width);
         void setEraserStrongWidth(qreal width);
 
          void setStylusPaletteVisible(bool visible);

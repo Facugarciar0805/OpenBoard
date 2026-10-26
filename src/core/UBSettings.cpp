@@ -303,11 +303,15 @@ void UBSettings::init()
     featureSliderPosition = new UBSetting(this, "Board", "FeatureSliderPosition", 40);
 
     boardPenFineWidth = new UBSetting(this, "Board", "PenFineWidth", 1.5);
+    boardPenMediumFineWidth = new UBSetting(this, "Board", "PenMediumFineWidth", 2.25);
     boardPenMediumWidth = new UBSetting(this, "Board", "PenMediumWidth", 3.0);
+    boardPenMediumStrongWidth = new UBSetting(this, "Board", "PenMediumStrongWidth", 5.5);
     boardPenStrongWidth = new UBSetting(this, "Board", "PenStrongWidth", 8.0);
 
     boardMarkerFineWidth = new UBSetting(this, "Board", "MarkerFineWidth", 12.0);
+    boardMarkerMediumFineWidth = new UBSetting(this, "Board", "MarkerMediumFineWidth", 18.0);
     boardMarkerMediumWidth = new UBSetting(this, "Board", "MarkerMediumWidth", 24.0);
+    boardMarkerMediumStrongWidth = new UBSetting(this, "Board", "MarkerMediumStrongWidth", 36.0);
     boardMarkerStrongWidth = new UBSetting(this, "Board", "MarkerStrongWidth", 48.0);
 
     boardPenPressureSensitive = new UBSetting(this, "Board", "PenPressureSensitive", true);
@@ -637,8 +641,14 @@ qreal UBSettings::currentPenWidth()
         case UBWidth::Fine:
             width = boardPenFineWidth->get().toDouble();
             break;
+        case UBWidth::MediumFine:
+            width = boardPenMediumFineWidth->get().toDouble();
+            break;
         case UBWidth::Medium:
             width = boardPenMediumWidth->get().toDouble();
+            break;
+        case UBWidth::MediumStrong:
+            width = boardPenMediumStrongWidth->get().toDouble();
             break;
         case UBWidth::Strong:
             width = boardPenStrongWidth->get().toDouble();
@@ -724,8 +734,14 @@ qreal UBSettings::currentMarkerWidth()
         case UBWidth::Fine:
             width = boardMarkerFineWidth->get().toDouble();
             break;
+        case UBWidth::MediumFine:
+            width = boardMarkerMediumFineWidth->get().toDouble();
+            break;
         case UBWidth::Medium:
             width = boardMarkerMediumWidth->get().toDouble();
+            break;
+        case UBWidth::MediumStrong:
+            width = boardMarkerMediumStrongWidth->get().toDouble();
             break;
         case UBWidth::Strong:
             width = boardMarkerStrongWidth->get().toDouble();
@@ -845,7 +861,7 @@ void UBSettings::setColorPaletteSize(int size)
 
 int UBSettings::eraserWidthIndex()
 {
-    return value("Board/EraserCircleWidthIndex", 1).toInt();
+    return value("Board/EraserCircleWidthIndex", 2).toInt();
 }
 
 void UBSettings::setEraserWidthIndex(int index)
@@ -863,6 +879,16 @@ void UBSettings::setEraserFineWidth(qreal width)
     setValue("Board/EraserFineWidth", width);
 }
 
+qreal UBSettings::eraserMediumFineWidth()
+{
+    return value("Board/EraserMediumFineWidth", 32).toDouble();
+}
+
+void UBSettings::setEraserMediumFineWidth(qreal width)
+{
+    setValue("Board/EraserMediumFineWidth", width);
+}
+
 qreal UBSettings::eraserMediumWidth()
 {
     return value("Board/EraserMediumWidth", 64).toDouble();
@@ -871,6 +897,16 @@ qreal UBSettings::eraserMediumWidth()
 void UBSettings::setEraserMediumWidth(qreal width)
 {
     setValue("Board/EraserMediumWidth", width);
+}
+
+qreal UBSettings::eraserMediumStrongWidth()
+{
+    return value("Board/EraserMediumStrongWidth", 96).toDouble();
+}
+
+void UBSettings::setEraserMediumStrongWidth(qreal width)
+{
+    setValue("Board/EraserMediumStrongWidth", width);
 }
 
 qreal UBSettings::eraserStrongWidth()
@@ -892,8 +928,14 @@ qreal UBSettings::currentEraserWidth()
         case UBWidth::Fine:
             width = eraserFineWidth();
             break;
+        case UBWidth::MediumFine:
+            width = eraserMediumFineWidth();
+            break;
         case UBWidth::Medium:
             width = eraserMediumWidth();
+            break;
+        case UBWidth::MediumStrong:
+            width = eraserMediumStrongWidth();
             break;
         case UBWidth::Strong:
             width = eraserStrongWidth();
@@ -1599,5 +1641,30 @@ void UBSettings::checkNewSettings()
 
     // CrossedBackground changed in 1.4 (no longer a bool but an enum; can be crossed or ruled)
     removeSetting("Board/CrossedBackground");
+
+    // Remap 3-level width indexes (0, 1, 2) to 5-level width indexes (0, 2, 4)
+    if (!mUserSettings->value("Board/FiveWidthLevelsMigrated", false).toBool())
+    {
+        auto remapWidth = [](int oldIndex) -> int {
+            if (oldIndex == 1) return 2;
+            if (oldIndex == 2) return 4;
+            return oldIndex;
+        };
+
+        if (mUserSettings->contains("Board/PenLineWidthIndex")) {
+            int oldVal = mUserSettings->value("Board/PenLineWidthIndex").toInt();
+            mUserSettings->setValue("Board/PenLineWidthIndex", remapWidth(oldVal));
+        }
+        if (mUserSettings->contains("Board/MarkerLineWidthIndex")) {
+            int oldVal = mUserSettings->value("Board/MarkerLineWidthIndex").toInt();
+            mUserSettings->setValue("Board/MarkerLineWidthIndex", remapWidth(oldVal));
+        }
+        if (mUserSettings->contains("Board/EraserCircleWidthIndex")) {
+            int oldVal = mUserSettings->value("Board/EraserCircleWidthIndex").toInt();
+            mUserSettings->setValue("Board/EraserCircleWidthIndex", remapWidth(oldVal));
+        }
+        mUserSettings->setValue("Board/FiveWidthLevelsMigrated", true);
+        mUserSettings->sync();
+    }
 
 }

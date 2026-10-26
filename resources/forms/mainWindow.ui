@@ -369,6 +369,21 @@
     <string>Small Line</string>
    </property>
   </action>
+  <action name="actionLineMediumFine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/smallPen.png</normaloff>:/images/toolbar/smallPen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Medium-Fine Line</string>
+   </property>
+  </action>
   <action name="actionLineMedium">
    <property name="checkable">
     <bool>true</bool>
@@ -382,6 +397,21 @@
    </property>
    <property name="toolTip">
     <string>Medium Line</string>
+   </property>
+  </action>
+  <action name="actionLineMediumStrong">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/largePen.png</normaloff>:/images/toolbar/largePen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Medium-Strong Line</string>
    </property>
   </action>
   <action name="actionLineLarge">
@@ -432,6 +462,21 @@
     <string>Small Eraser</string>
    </property>
   </action>
+  <action name="actionEraserMediumFine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/smallEraser.png</normaloff>:/images/toolbar/smallEraser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Eraser</string>
+   </property>
+   <property name="toolTip">
+    <string>Medium-Fine Eraser</string>
+   </property>
+  </action>
   <action name="actionEraserMedium">
    <property name="checkable">
     <bool>true</bool>
@@ -448,6 +493,21 @@
    </property>
    <property name="toolTip">
     <string>Medium Eraser</string>
+   </property>
+  </action>
+  <action name="actionEraserMediumStrong">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/largeEraser.png</normaloff>:/images/toolbar/largeEraser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Eraser</string>
+   </property>
+   <property name="toolTip">
+    <string>Medium-Strong Eraser</string>
    </property>
   </action>
   <action name="actionEraserLarge">

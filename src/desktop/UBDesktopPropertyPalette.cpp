@@ -86,7 +86,9 @@ UBDesktopPenPalette::UBDesktopPenPalette(QWidget *parent, UBRightPalette* rightP
     // Setup line width choice widget
     QList<QAction *> lineWidthActions;
     lineWidthActions.append(UBApplication::mainWindow->actionLineSmall);
+    lineWidthActions.append(UBApplication::mainWindow->actionLineMediumFine);
     lineWidthActions.append(UBApplication::mainWindow->actionLineMedium);
+    lineWidthActions.append(UBApplication::mainWindow->actionLineMediumStrong);
     lineWidthActions.append(UBApplication::mainWindow->actionLineLarge);
 
     UBToolbarButtonGroup *lineWidthChoice =
@@ -138,7 +140,9 @@ UBDesktopEraserPalette::UBDesktopEraserPalette(QWidget *parent, UBRightPalette* 
     // Setup eraser width choice widget
     QList<QAction *> eraserWidthActions;
     eraserWidthActions.append(UBApplication::mainWindow->actionEraserSmall);
+    eraserWidthActions.append(UBApplication::mainWindow->actionEraserMediumFine);
     eraserWidthActions.append(UBApplication::mainWindow->actionEraserMedium);
+    eraserWidthActions.append(UBApplication::mainWindow->actionEraserMediumStrong);
     eraserWidthActions.append(UBApplication::mainWindow->actionEraserLarge);
 
     UBToolbarButtonGroup *eraserWidthChoice = new UBToolbarButtonGroup(UBApplication::mainWindow->boardToolBar, eraserWidthActions, objectNamePrefix);
@@ -187,7 +191,9 @@ UBDesktopMarkerPalette::UBDesktopMarkerPalette(QWidget *parent, UBRightPalette* 
     // Setup line width choice widget
     QList<QAction *> lineWidthActions;
     lineWidthActions.append(UBApplication::mainWindow->actionLineSmall);
+    lineWidthActions.append(UBApplication::mainWindow->actionLineMediumFine);
     lineWidthActions.append(UBApplication::mainWindow->actionLineMedium);
+    lineWidthActions.append(UBApplication::mainWindow->actionLineMediumStrong);
     lineWidthActions.append(UBApplication::mainWindow->actionLineLarge);
 
     UBToolbarButtonGroup *lineWidthChoice = new UBToolbarButtonGroup(UBApplication::mainWindow->boardToolBar, lineWidthActions, objectNamePrefix);

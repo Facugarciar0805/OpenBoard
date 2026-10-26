@@ -374,7 +374,9 @@ void UBBoardController::setupToolbar()
     // Setup line width choice widget
     QList<QAction *> lineWidthActions;
     lineWidthActions.append(mMainWindow->actionLineSmall);
+    lineWidthActions.append(mMainWindow->actionLineMediumFine);
     lineWidthActions.append(mMainWindow->actionLineMedium);
+    lineWidthActions.append(mMainWindow->actionLineMediumStrong);
     lineWidthActions.append(mMainWindow->actionLineLarge);
 
     UBToolbarButtonGroup *lineWidthChoice =
@@ -399,7 +401,9 @@ void UBBoardController::setupToolbar()
 
     QList<QAction *> eraserWidthActions;
     eraserWidthActions.append(mMainWindow->actionEraserSmall);
+    eraserWidthActions.append(mMainWindow->actionEraserMediumFine);
     eraserWidthActions.append(mMainWindow->actionEraserMedium);
+    eraserWidthActions.append(mMainWindow->actionEraserMediumStrong);
     eraserWidthActions.append(mMainWindow->actionEraserLarge);
 
     UBToolbarButtonGroup *eraserWidthChoice =

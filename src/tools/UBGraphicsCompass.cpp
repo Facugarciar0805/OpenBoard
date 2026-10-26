@@ -805,8 +805,9 @@ QPainterPath UBGraphicsCompass::hingeShape() const
 
 QPainterPath UBGraphicsCompass::pencilShape() const
 {
-    int penWidthIndex = UBSettings::settings()->penWidthIndex();
-    int logicalCompassPencilWidth = penWidthIndex > 1 ? 8 : (penWidthIndex > 0 ? 4 : 2);
+    int penWidthIndex = qBound(0, UBSettings::settings()->penWidthIndex(), 4);
+    static const int widths[] = {2, 3, 4, 6, 8};
+    int logicalCompassPencilWidth = widths[penWidthIndex];
     QPainterPath path;
     path.moveTo(rect().right() - sPencilLength, rect().center().y() - logicalCompassPencilWidth / 2);
     path.lineTo(rect().right() - logicalCompassPencilWidth / 2, rect().center().y() - logicalCompassPencilWidth / 2);

@@ -32,24 +32,15 @@
       <string>Line Width</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="0">
+       <widget class="QLabel" name="fineLabel">
+        <property name="text">
+         <string>Fine</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="1">
        <spacer name="wSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="3">
-       <spacer name="eSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -86,57 +77,21 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="mediumLabel">
-        <property name="text">
-         <string>Medium</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QSlider" name="mediumSlider">
-        <property name="minimum">
-         <number>5</number>
-        </property>
-        <property name="maximum">
-         <number>500</number>
-        </property>
+      <item row="1" column="3">
+       <spacer name="eSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
         </property>
-        <property name="tickInterval">
-         <number>100</number>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="strongLabel">
-        <property name="text">
-         <string>Strong</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QSlider" name="strongSlider">
-        <property name="minimum">
-         <number>5</number>
-        </property>
-        <property name="maximum">
-         <number>500</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
-        </property>
-        <property name="tickInterval">
-         <number>100</number>
-        </property>
-       </widget>
+       </spacer>
       </item>
       <item row="1" column="4">
        <widget class="UBCircleFrame" name="fineDisplayFrame">
@@ -160,7 +115,81 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="mediumFineLabel">
+        <property name="text">
+         <string>Medium-Fine</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QSlider" name="mediumFineSlider">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="4">
+       <widget class="UBCircleFrame" name="mediumFineDisplayFrame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>60</horstretch>
+          <verstretch>60</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="mediumLabel">
+        <property name="text">
+         <string>Medium</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QSlider" name="mediumSlider">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="4">
        <widget class="UBCircleFrame" name="mediumDisplayFrame">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -182,8 +211,34 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="4">
-       <widget class="UBCircleFrame" name="strongDisplayFrame">
+      <item row="4" column="0">
+       <widget class="QLabel" name="mediumStrongLabel">
+        <property name="text">
+         <string>Medium-Strong</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QSlider" name="mediumStrongSlider">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="4">
+       <widget class="UBCircleFrame" name="mediumStrongDisplayFrame">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>60</horstretch>
@@ -204,10 +259,51 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="fineLabel">
+      <item row="5" column="0">
+       <widget class="QLabel" name="strongLabel">
         <property name="text">
-         <string>Fine</string>
+         <string>Strong</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QSlider" name="strongSlider">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>500</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="4">
+       <widget class="UBCircleFrame" name="strongDisplayFrame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>60</horstretch>
+          <verstretch>60</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
         </property>
        </widget>
       </item>
@@ -334,6 +430,16 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>fineSlider</tabstop>
+  <tabstop>mediumFineSlider</tabstop>
+  <tabstop>mediumSlider</tabstop>
+  <tabstop>mediumStrongSlider</tabstop>
+  <tabstop>strongSlider</tabstop>
+  <tabstop>circleCheckBox</tabstop>
+  <tabstop>circleSpinBox</tabstop>
+  <tabstop>pressureSensitiveCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

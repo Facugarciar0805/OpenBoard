@@ -382,7 +382,9 @@ void UBPreferencesController::wire()
     mPenProperties = new UBBrushPropertiesFrame(mPreferencesUI->penFrame);
 
     connect(mPenProperties->fineSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
+    connect(mPenProperties->mediumFineSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mPenProperties->mediumSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
+    connect(mPenProperties->mediumStrongSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mPenProperties->strongSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mPenProperties->pressureSensitiveCheckBox, SIGNAL(clicked(bool)), settings, SLOT(setPenPressureSensitive(bool)));
     connect(mPenProperties->circleCheckBox, SIGNAL(clicked(bool)), settings, SLOT(setPenPreviewCircle(bool)));
@@ -396,7 +398,9 @@ void UBPreferencesController::wire()
     mMarkerProperties->circleFrame->hide();
 
     connect(mMarkerProperties->fineSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
+    connect(mMarkerProperties->mediumFineSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mMarkerProperties->mediumSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
+    connect(mMarkerProperties->mediumStrongSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mMarkerProperties->strongSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mMarkerProperties->pressureSensitiveCheckBox, SIGNAL(clicked(bool)), settings, SLOT(setMarkerPressureSensitive(bool)));
 
@@ -489,7 +493,9 @@ void UBPreferencesController::init()
 
     // pen tab
     mPenProperties->fineSlider->setValue(settings->boardPenFineWidth->get().toDouble() * sSliderRatio);
+    mPenProperties->mediumFineSlider->setValue(settings->boardPenMediumFineWidth->get().toDouble() * sSliderRatio);
     mPenProperties->mediumSlider->setValue(settings->boardPenMediumWidth->get().toDouble() * sSliderRatio);
+    mPenProperties->mediumStrongSlider->setValue(settings->boardPenMediumStrongWidth->get().toDouble() * sSliderRatio);
     mPenProperties->strongSlider->setValue(settings->boardPenStrongWidth->get().toDouble() * sSliderRatio);
     mPenProperties->pressureSensitiveCheckBox->setChecked(settings->boardPenPressureSensitive->get().toBool());
     mPenProperties->circleCheckBox->setChecked(settings->showPenPreviewCircle->get().toBool());
@@ -497,7 +503,9 @@ void UBPreferencesController::init()
 
     // marker tab
     mMarkerProperties->fineSlider->setValue(settings->boardMarkerFineWidth->get().toDouble() * sSliderRatio);
+    mMarkerProperties->mediumFineSlider->setValue(settings->boardMarkerMediumFineWidth->get().toDouble() * sSliderRatio);
     mMarkerProperties->mediumSlider->setValue(settings->boardMarkerMediumWidth->get().toDouble() * sSliderRatio);
+    mMarkerProperties->mediumStrongSlider->setValue(settings->boardMarkerMediumStrongWidth->get().toDouble() * sSliderRatio);
     mMarkerProperties->strongSlider->setValue(settings->boardMarkerStrongWidth->get().toDouble() * sSliderRatio);
     mMarkerProperties->pressureSensitiveCheckBox->setChecked(settings->boardMarkerPressureSensitive->get().toBool());
 
@@ -563,7 +571,9 @@ void UBPreferencesController::defaultSettings()
     {
 
         mPenProperties->fineSlider->setValue(settings->boardPenFineWidth->reset().toDouble() * sSliderRatio);
+        mPenProperties->mediumFineSlider->setValue(settings->boardPenMediumFineWidth->reset().toDouble() * sSliderRatio);
         mPenProperties->mediumSlider->setValue(settings->boardPenMediumWidth->reset().toDouble() * sSliderRatio);
+        mPenProperties->mediumStrongSlider->setValue(settings->boardPenMediumStrongWidth->reset().toDouble() * sSliderRatio);
         mPenProperties->strongSlider->setValue(settings->boardPenStrongWidth->reset().toDouble() * sSliderRatio);
         mPenProperties->pressureSensitiveCheckBox->setChecked(settings->boardPenPressureSensitive->reset().toBool());
         mPenProperties->circleCheckBox->setChecked(settings->showPenPreviewCircle->reset().toBool());
@@ -572,7 +582,9 @@ void UBPreferencesController::defaultSettings()
     else if (mPreferencesUI->mainTabWidget->currentWidget() == mPreferencesUI->markerTab)
     {
         mMarkerProperties->fineSlider->setValue(settings->boardMarkerFineWidth->reset().toDouble() * sSliderRatio);
+        mMarkerProperties->mediumFineSlider->setValue(settings->boardMarkerMediumFineWidth->reset().toDouble() * sSliderRatio);
         mMarkerProperties->mediumSlider->setValue(settings->boardMarkerMediumWidth->reset().toDouble() * sSliderRatio);
+        mMarkerProperties->mediumStrongSlider->setValue(settings->boardMarkerMediumStrongWidth->reset().toDouble() * sSliderRatio);
         mMarkerProperties->strongSlider->setValue(settings->boardMarkerStrongWidth->reset().toDouble() * sSliderRatio);
         mMarkerProperties->pressureSensitiveCheckBox->setChecked(settings->boardMarkerPressureSensitive->reset().toBool());
     }
@@ -704,10 +716,20 @@ void UBPreferencesController::widthSliderChanged(int value)
         settings->boardPenFineWidth->set(width);
         display = mPenProperties->fineDisplayFrame;
     }
+    else if (slider == mPenProperties->mediumFineSlider)
+    {
+        settings->boardPenMediumFineWidth->set(width);
+        display = mPenProperties->mediumFineDisplayFrame;
+    }
     else if (slider == mPenProperties->mediumSlider)
     {
         settings->boardPenMediumWidth->set(width);
         display = mPenProperties->mediumDisplayFrame;
+    }
+    else if (slider == mPenProperties->mediumStrongSlider)
+    {
+        settings->boardPenMediumStrongWidth->set(width);
+        display = mPenProperties->mediumStrongDisplayFrame;
     }
     else if (slider == mPenProperties->strongSlider)
     {
@@ -719,10 +741,20 @@ void UBPreferencesController::widthSliderChanged(int value)
         settings->boardMarkerFineWidth->set(width);
         display = mMarkerProperties->fineDisplayFrame;
     }
+    else if (slider == mMarkerProperties->mediumFineSlider)
+    {
+        settings->boardMarkerMediumFineWidth->set(width);
+        display = mMarkerProperties->mediumFineDisplayFrame;
+    }
     else if (slider == mMarkerProperties->mediumSlider)
     {
         settings->boardMarkerMediumWidth->set(width);
         display = mMarkerProperties->mediumDisplayFrame;
+    }
+    else if (slider == mMarkerProperties->mediumStrongSlider)
+    {
+        settings->boardMarkerMediumStrongWidth->set(width);
+        display = mMarkerProperties->mediumStrongDisplayFrame;
     }
     else if (slider == mMarkerProperties->strongSlider)
     {

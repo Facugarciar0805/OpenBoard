@@ -194,10 +194,14 @@ void UBShortcutManager::addMainActions(UBMainWindow *mainWindow)
 
     addActions(tr("Lines and colours"), {
                    mainWindow->actionLineSmall,
+                   mainWindow->actionLineMediumFine,
                    mainWindow->actionLineMedium,
+                   mainWindow->actionLineMediumStrong,
                    mainWindow->actionLineLarge,
                    mainWindow->actionEraserSmall,
+                   mainWindow->actionEraserMediumFine,
                    mainWindow->actionEraserMedium,
+                   mainWindow->actionEraserMediumStrong,
                    mainWindow->actionEraserLarge,
                    mainWindow->actionColor0,
                    mainWindow->actionColor1,
