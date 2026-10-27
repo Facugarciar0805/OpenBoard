@@ -121,6 +121,12 @@ void UBGraphicsPolygonItem::setStroke(UBGraphicsStroke* stroke)
         mStroke = stroke;
         mStroke->addPolygon(this);
     }
+    else {
+        if (mStroke != NULL) {
+            mStroke->remove(this);
+            mStroke = NULL;
+        }
+    }
 }
 
 UBGraphicsStroke* UBGraphicsPolygonItem::stroke() const

@@ -389,6 +389,15 @@ void UBPreferencesController::wire()
     connect(mPenProperties->pressureSensitiveCheckBox, SIGNAL(clicked(bool)), settings, SLOT(setPenPressureSensitive(bool)));
     connect(mPenProperties->circleCheckBox, SIGNAL(clicked(bool)), settings, SLOT(setPenPreviewCircle(bool)));
     connect(mPenProperties->circleSpinBox, SIGNAL(valueChanged(int)), this, SLOT(penPreviewFromSizeChanged(int)));
+    connect(mPenProperties->shapeRecognitionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, settings](int index){
+        settings->boardPenShapeRecognitionMode->set(index);
+        mPenProperties->shapeHoldTimeSpinBox->setEnabled(index == 1);
+    });
+    connect(mPenProperties->shapeHoldTimeSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, settings](int value){
+        settings->boardShapeRecognitionHoldTime->set(value);
+        if (mMarkerProperties->shapeHoldTimeSpinBox->value() != value)
+            mMarkerProperties->shapeHoldTimeSpinBox->setValue(value);
+    });
 
     // marker
     mMarkerProperties = new UBBrushPropertiesFrame(mPreferencesUI->markerFrame);
@@ -403,6 +412,15 @@ void UBPreferencesController::wire()
     connect(mMarkerProperties->mediumStrongSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mMarkerProperties->strongSlider, SIGNAL(valueChanged(int)), this, SLOT(widthSliderChanged(int)));
     connect(mMarkerProperties->pressureSensitiveCheckBox, SIGNAL(clicked(bool)), settings, SLOT(setMarkerPressureSensitive(bool)));
+    connect(mMarkerProperties->shapeRecognitionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, settings](int index){
+        settings->boardMarkerShapeRecognitionMode->set(index);
+        mMarkerProperties->shapeHoldTimeSpinBox->setEnabled(index == 1);
+    });
+    connect(mMarkerProperties->shapeHoldTimeSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, settings](int value){
+        settings->boardShapeRecognitionHoldTime->set(value);
+        if (mPenProperties->shapeHoldTimeSpinBox->value() != value)
+            mPenProperties->shapeHoldTimeSpinBox->setValue(value);
+    });
 
     // about tab
     connect(mPreferencesUI->checkSoftwareUpdateAtLaunchCheckBox, SIGNAL(clicked(bool)), settings->appEnableAutomaticSoftwareUpdates, SLOT(setBool(bool)));
@@ -500,6 +518,10 @@ void UBPreferencesController::init()
     mPenProperties->pressureSensitiveCheckBox->setChecked(settings->boardPenPressureSensitive->get().toBool());
     mPenProperties->circleCheckBox->setChecked(settings->showPenPreviewCircle->get().toBool());
     mPenProperties->circleSpinBox->setValue(settings->penPreviewFromSize->get().toInt());
+    int penShapeMode = settings->boardPenShapeRecognitionMode->get().toInt();
+    mPenProperties->shapeRecognitionComboBox->setCurrentIndex(penShapeMode);
+    mPenProperties->shapeHoldTimeSpinBox->setEnabled(penShapeMode == 1);
+    mPenProperties->shapeHoldTimeSpinBox->setValue(settings->boardShapeRecognitionHoldTime->get().toInt());
 
     // marker tab
     mMarkerProperties->fineSlider->setValue(settings->boardMarkerFineWidth->get().toDouble() * sSliderRatio);
@@ -508,6 +530,10 @@ void UBPreferencesController::init()
     mMarkerProperties->mediumStrongSlider->setValue(settings->boardMarkerMediumStrongWidth->get().toDouble() * sSliderRatio);
     mMarkerProperties->strongSlider->setValue(settings->boardMarkerStrongWidth->get().toDouble() * sSliderRatio);
     mMarkerProperties->pressureSensitiveCheckBox->setChecked(settings->boardMarkerPressureSensitive->get().toBool());
+    int markerShapeMode = settings->boardMarkerShapeRecognitionMode->get().toInt();
+    mMarkerProperties->shapeRecognitionComboBox->setCurrentIndex(markerShapeMode);
+    mMarkerProperties->shapeHoldTimeSpinBox->setEnabled(markerShapeMode == 1);
+    mMarkerProperties->shapeHoldTimeSpinBox->setValue(settings->boardShapeRecognitionHoldTime->get().toInt());
 
     // shortcut tab
     mPreferencesUI->shortcutTableView->setModel(UBShortcutManager::shortcutManager());
@@ -578,6 +604,10 @@ void UBPreferencesController::defaultSettings()
         mPenProperties->pressureSensitiveCheckBox->setChecked(settings->boardPenPressureSensitive->reset().toBool());
         mPenProperties->circleCheckBox->setChecked(settings->showPenPreviewCircle->reset().toBool());
         mPenProperties->circleSpinBox->setValue(settings->penPreviewFromSize->reset().toInt());
+        int defPenShapeMode = settings->boardPenShapeRecognitionMode->reset().toInt();
+        mPenProperties->shapeRecognitionComboBox->setCurrentIndex(defPenShapeMode);
+        mPenProperties->shapeHoldTimeSpinBox->setEnabled(defPenShapeMode == 1);
+        mPenProperties->shapeHoldTimeSpinBox->setValue(settings->boardShapeRecognitionHoldTime->reset().toInt());
     }
     else if (mPreferencesUI->mainTabWidget->currentWidget() == mPreferencesUI->markerTab)
     {
@@ -587,6 +617,10 @@ void UBPreferencesController::defaultSettings()
         mMarkerProperties->mediumStrongSlider->setValue(settings->boardMarkerMediumStrongWidth->reset().toDouble() * sSliderRatio);
         mMarkerProperties->strongSlider->setValue(settings->boardMarkerStrongWidth->reset().toDouble() * sSliderRatio);
         mMarkerProperties->pressureSensitiveCheckBox->setChecked(settings->boardMarkerPressureSensitive->reset().toBool());
+        int defMarkerShapeMode = settings->boardMarkerShapeRecognitionMode->reset().toInt();
+        mMarkerProperties->shapeRecognitionComboBox->setCurrentIndex(defMarkerShapeMode);
+        mMarkerProperties->shapeHoldTimeSpinBox->setEnabled(defMarkerShapeMode == 1);
+        mMarkerProperties->shapeHoldTimeSpinBox->setValue(settings->boardShapeRecognitionHoldTime->reset().toInt());
     }
     else if (mPreferencesUI->mainTabWidget->currentWidget() == mPreferencesUI->aboutTab)
     {

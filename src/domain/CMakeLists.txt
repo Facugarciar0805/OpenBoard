@@ -53,6 +53,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBResizableGraphicsItem.h
     UBSelectionFrame.cpp
     UBSelectionFrame.h
+    UBShapeRecognizer.cpp
+    UBShapeRecognizer.h
     UBUndoCommand.cpp
     UBUndoCommand.h
     UBWebEngineView.cpp

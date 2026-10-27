@@ -53,6 +53,7 @@ class UBGraphicsCompass;
 class UBDocumentProxy;
 class UBGraphicsCurtainItem;
 class UBGraphicsStroke;
+class QTimer;
 class UBMagnifierParams;
 class UBMagnifier;
 class UBGraphicsCache;
@@ -420,6 +421,7 @@ signals:
         void updatePenCircleColor();
         bool hasTextItemWithFocus(UBGraphicsGroupContainerItem* item);
         void simplifyCurrentStroke();
+        bool recognizeAndReplaceCurrentStroke(UBStylusTool::Enum tool);
 
         QGraphicsEllipseItem* mEraser;
         QGraphicsEllipseItem* mPointer; // "laser" pointer
@@ -479,6 +481,13 @@ signals:
         UBSelectionFrame *mSelectionFrame;
 
         UBGraphicsCache* mGraphicsCache;
+
+        QTimer* mShapeHoldTimer;
+        QPointF mShapeHoldAnchor;
+        bool mShapeLocked;
+
+    private slots:
+        void onShapeHoldTimeout();
 };
 
 

@@ -31,6 +31,9 @@
 #include <QtSvg>
 #include <QGraphicsView>
 #include <QGraphicsVideoItem>
+#include <QTimer>
+
+#include "UBShapeRecognizer.h"
 
 #include "frameworks/UBGeometryUtils.h"
 
@@ -340,7 +343,13 @@ UBGraphicsScene::UBGraphicsScene(std::shared_ptr<UBDocumentProxy> document, bool
     , mCurrentPolygon(0)
     , mSelectionFrame(0)
     , mGraphicsCache(nullptr)
+    , mShapeHoldTimer(new QTimer(this))
+    , mShapeHoldAnchor(QPointF())
+    , mShapeLocked(false)
 {
+    mShapeHoldTimer->setSingleShot(true);
+    connect(mShapeHoldTimer, &QTimer::timeout, this, &UBGraphicsScene::onShapeHoldTimeout);
+
     UBCoreGraphicsScene::setObjectName("BoardScene");
     setItemIndexMethod(BspTreeIndex);
 
@@ -405,6 +414,9 @@ bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pre
     }
     else {
         mInputDeviceIsPressed = true;
+        mShapeLocked = false;
+        if (mShapeHoldTimer)
+            mShapeHoldTimer->stop();
 
         UBStylusTool::Enum currentTool = (UBStylusTool::Enum)UBDrawingController::drawingController()->stylusTool();
 
@@ -614,6 +626,35 @@ bool UBGraphicsScene::inputDeviceMove(const QPointF& scenePos, const qreal& pres
             }
 
             else {
+                int shapeMode = 0;
+                if (currentTool == UBStylusTool::Pen) {
+                    shapeMode = UBSettings::settings()->boardPenShapeRecognitionMode->get().toInt();
+                } else if (currentTool == UBStylusTool::Marker) {
+                    shapeMode = UBSettings::settings()->boardMarkerShapeRecognitionMode->get().toInt();
+                }
+
+                if (shapeMode == 1) {
+                    if (mShapeLocked) {
+                        accepted = true;
+                        return accepted;
+                    }
+
+                    qreal scaleFactor = UBApplication::boardController->systemScaleFactor() * UBApplication::boardController->currentZoom();
+                    qreal tolerance = UBSettings::settings()->boardShapeRecognitionHoldTolerance->get().toReal();
+                    int holdTime = UBSettings::settings()->boardShapeRecognitionHoldTime->get().toInt();
+
+                    if (!mShapeHoldTimer->isActive()) {
+                        mShapeHoldAnchor = scenePos;
+                        mShapeHoldTimer->start(holdTime);
+                    } else {
+                        qreal distPixels = QLineF(mShapeHoldAnchor, scenePos).length() * scaleFactor;
+                        if (distPixels > tolerance) {
+                            mShapeHoldAnchor = scenePos;
+                            mShapeHoldTimer->start(holdTime);
+                        }
+                    }
+                }
+
                 bool interpolate = false;
 
                 if ((currentTool == UBStylusTool::Pen && UBSettings::settings()->boardInterpolatePenStrokes->get().toBool())
@@ -683,6 +724,9 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
 {
     bool accepted = false;
 
+    if (mShapeHoldTimer)
+        mShapeHoldTimer->stop();
+
     if (mPointer)
     {
         mPointer->hide();
@@ -728,6 +772,9 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
             mDrawWithCompass = false;
         }
         else if (mCurrentStroke){
+            if (mShapeHoldTimer)
+                mShapeHoldTimer->stop();
+
             if (mTempPolygon) {
                 UBGraphicsPolygonItem * poly = dynamic_cast<UBGraphicsPolygonItem*>(mTempPolygon->deepCopy());
                 removeItem(mTempPolygon);
@@ -735,12 +782,31 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 addPolygonItemToCurrentStroke(poly);
             }
 
-            // replace the stroke by a simplified version of it
-            if ((currentTool == UBStylusTool::Pen && UBSettings::settings()->boardSimplifyPenStrokes->get().toBool())
-                || (currentTool == UBStylusTool::Marker && UBSettings::settings()->boardSimplifyMarkerStrokes->get().toBool()))
-            {
-                simplifyCurrentStroke();
+            int shapeMode = 0;
+            if (currentTool == UBStylusTool::Pen) {
+                shapeMode = UBSettings::settings()->boardPenShapeRecognitionMode->get().toInt();
+            } else if (currentTool == UBStylusTool::Marker) {
+                shapeMode = UBSettings::settings()->boardMarkerShapeRecognitionMode->get().toInt();
             }
+
+            if (shapeMode == 2 && !mShapeLocked) {
+                if (!recognizeAndReplaceCurrentStroke(currentTool)) {
+                    if ((currentTool == UBStylusTool::Pen && UBSettings::settings()->boardSimplifyPenStrokes->get().toBool())
+                        || (currentTool == UBStylusTool::Marker && UBSettings::settings()->boardSimplifyMarkerStrokes->get().toBool()))
+                    {
+                        simplifyCurrentStroke();
+                    }
+                }
+            } else if (!mShapeLocked) {
+                // replace the stroke by a simplified version of it
+                if ((currentTool == UBStylusTool::Pen && UBSettings::settings()->boardSimplifyPenStrokes->get().toBool())
+                    || (currentTool == UBStylusTool::Marker && UBSettings::settings()->boardSimplifyMarkerStrokes->get().toBool()))
+                {
+                    simplifyCurrentStroke();
+                }
+            }
+
+            mShapeLocked = false;
 
 
             UBGraphicsStrokesGroup* pStrokes = new UBGraphicsStrokesGroup();
@@ -2918,6 +2984,192 @@ void UBGraphicsScene::simplifyCurrentStroke()
         mPreviousPolygonItems.append(poly);
     }
 
+}
+
+bool UBGraphicsScene::recognizeAndReplaceCurrentStroke(UBStylusTool::Enum tool)
+{
+    Q_UNUSED(tool);
+
+    if (!mCurrentStroke)
+        return false;
+
+    if (mTempPolygon)
+    {
+        UBGraphicsPolygonItem * poly = dynamic_cast<UBGraphicsPolygonItem*>(mTempPolygon->deepCopy());
+        removeItem(mTempPolygon);
+        mTempPolygon = NULL;
+        addPolygonItemToCurrentStroke(poly);
+    }
+
+    const QList<QPair<QPointF, qreal>>& strokePoints = mCurrentStroke->points();
+    if (strokePoints.size() < 5)
+        return false;
+
+    QList<QPointF> rawPoints;
+    rawPoints.reserve(strokePoints.size());
+    qreal sumWidth = 0.0;
+    for (const auto& sp : strokePoints)
+    {
+        rawPoints.append(sp.first);
+        sumWidth += sp.second;
+    }
+    qreal meanWidth = sumWidth / strokePoints.size();
+    if (meanWidth <= 0.0)
+    {
+        meanWidth = UBDrawingController::drawingController()->currentToolWidth() /
+            (UBApplication::boardController->systemScaleFactor() * UBApplication::boardController->currentZoom());
+    }
+
+    UBShapeRecognizerParams params;
+    if (UBApplication::boardController)
+    {
+        params.minSize = 40.0 / (UBApplication::boardController->systemScaleFactor() * UBApplication::boardController->currentZoom());
+    }
+    UBRecognizedShape shape = UBShapeRecognizer::recognize(rawPoints, params);
+    if (shape.type == UBRecognizedShape::None || shape.points.size() < 2)
+        return false;
+
+    bool hasAlpha = mCurrentStroke->hasAlpha();
+    QColor strokeColor;
+    QColor colorDark;
+    QColor colorLight;
+    if (!mCurrentStroke->polygons().isEmpty())
+    {
+        strokeColor = mCurrentStroke->polygons().first()->color();
+        colorDark = mCurrentStroke->polygons().first()->colorOnDarkBackground();
+        colorLight = mCurrentStroke->polygons().first()->colorOnLightBackground();
+    }
+
+    // Remove old stroke polygons from scene, previous items, and added items
+    UBGraphicsStroke* oldStroke = mCurrentStroke;
+    mCurrentStroke = NULL;
+    mpLastPolygon = NULL;
+
+    QList<UBGraphicsPolygonItem*> oldPolygons = oldStroke->polygons();
+    foreach(UBGraphicsPolygonItem* poly, oldPolygons)
+    {
+        poly->setStroke(nullptr);
+        mPreviousPolygonItems.removeAll(poly);
+        mAddedItems.remove(poly);
+        UBCoreGraphicsScene::removeItemFromDeletion(poly);
+        removeItem(poly);
+        delete poly;
+    }
+    delete oldStroke;
+    oldStroke = NULL;
+
+    // Create new stroke
+    UBGraphicsStroke* newStroke = new UBGraphicsStroke(shared_from_this());
+
+    QList<QPair<QPointF, qreal>> newPointsWithWidth;
+    newPointsWithWidth.reserve(shape.points.size());
+    for (const QPointF& pt : shape.points)
+    {
+        newPointsWithWidth.append(QPair<QPointF, qreal>(pt, meanWidth));
+    }
+
+    QList<UBGraphicsPolygonItem*> newPolygons;
+    QList<QPair<QPointF, qreal>> newStrokePoints;
+    int i = 0;
+
+    while (i < newPointsWithWidth.size())
+    {
+        bool drawCurve = false;
+        newStrokePoints.append(newPointsWithWidth[i]);
+
+        if (newStrokePoints.size() > 1 && i < newPointsWithWidth.size() - 1)
+        {
+            qreal angle = qFabs(UBGeometryUtils::angle(newPointsWithWidth[i - 1].first, newPointsWithWidth[i].first, newPointsWithWidth[i + 1].first));
+            if (angle < 150)
+                drawCurve = true;
+        }
+
+        if (hasAlpha && newStrokePoints.size() % 20 == 0)
+            drawCurve = true;
+
+        if (drawCurve)
+        {
+            UBGraphicsPolygonItem* poly = polygonToPolygonItem(UBGeometryUtils::curveToPolygon(newStrokePoints, true, true));
+            if (strokeColor.isValid())
+            {
+                poly->setColor(strokeColor);
+                poly->setColorOnDarkBackground(colorDark);
+                poly->setColorOnLightBackground(colorLight);
+            }
+
+            if (!poly->brush().isOpaque())
+            {
+                foreach(UBGraphicsPolygonItem* prev, newPolygons)
+                    poly->subtract(prev);
+            }
+
+            newPolygons.append(poly);
+            newStrokePoints.clear();
+            --i;
+        }
+
+        ++i;
+    }
+
+    if (newStrokePoints.size() > 1)
+    {
+        UBGraphicsPolygonItem* poly = polygonToPolygonItem(UBGeometryUtils::curveToPolygon(newStrokePoints, true, true));
+        if (strokeColor.isValid())
+        {
+            poly->setColor(strokeColor);
+            poly->setColorOnDarkBackground(colorDark);
+            poly->setColorOnLightBackground(colorLight);
+        }
+
+        if (!poly->brush().isOpaque())
+        {
+            foreach(UBGraphicsPolygonItem* prev, newPolygons)
+                poly->subtract(prev);
+        }
+
+        newPolygons.append(poly);
+    }
+
+    foreach(UBGraphicsPolygonItem* poly, newPolygons)
+    {
+        poly->setFillRule(Qt::WindingFill);
+        poly->setStroke(newStroke);
+        addItem(poly);
+        mPreviousPolygonItems.append(poly);
+        mAddedItems.insert(poly);
+        mpLastPolygon = poly;
+    }
+
+    mCurrentStroke = newStroke;
+
+    return true;
+}
+
+void UBGraphicsScene::onShapeHoldTimeout()
+{
+    if (!mInputDeviceIsPressed)
+        return;
+
+    UBDrawingController *dc = UBDrawingController::drawingController();
+    UBStylusTool::Enum currentTool = (UBStylusTool::Enum)dc->stylusTool();
+
+    int shapeMode = 0;
+    if (currentTool == UBStylusTool::Pen)
+    {
+        shapeMode = UBSettings::settings()->boardPenShapeRecognitionMode->get().toInt();
+    }
+    else if (currentTool == UBStylusTool::Marker)
+    {
+        shapeMode = UBSettings::settings()->boardMarkerShapeRecognitionMode->get().toInt();
+    }
+
+    if (shapeMode == 1 && mCurrentStroke)
+    {
+        if (recognizeAndReplaceCurrentStroke(currentTool))
+        {
+            mShapeLocked = true;
+        }
+    }
 }
 
 void UBGraphicsScene::setDocumentUpdated()

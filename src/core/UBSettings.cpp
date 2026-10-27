@@ -327,6 +327,11 @@ void UBSettings::init()
     boardInterpolateMarkerStrokes = new UBSetting(this, "Board", "InterpolateMarkerStrokes", true);
     boardSimplifyMarkerStrokes = new UBSetting(this, "Board", "SimplifyMarkerStrokes", true);
 
+    boardPenShapeRecognitionMode = new UBSetting(this, "Board", "PenShapeRecognitionMode", 0);
+    boardMarkerShapeRecognitionMode = new UBSetting(this, "Board", "MarkerShapeRecognitionMode", 0);
+    boardShapeRecognitionHoldTime = new UBSetting(this, "Board", "ShapeRecognitionHoldTime", 600);
+    boardShapeRecognitionHoldTolerance = new UBSetting(this, "Board", "ShapeRecognitionHoldTolerance", 6);
+
     boardKeyboardPaletteKeyBtnSize = new UBSetting(this, "Board", "KeyboardPaletteKeyBtnSize", "16x16");
     ValidateKeyboardPaletteKeyBtnSize();
 

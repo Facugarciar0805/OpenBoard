@@ -420,8 +420,144 @@
      </property>
     </spacer>
    </item>
+   <item row="4" column="1" colspan="3">
+    <widget class="QFrame" name="shapeRecognitionFrame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_shapeRec">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="shapeRecognitionLabel">
+        <property name="text">
+         <string>Shape recognition</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="shapeRecognitionComboBox">
+        <item>
+         <property name="text">
+          <string>Off</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hold still</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>On release</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <spacer name="shapeRecSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>198</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="3">
+    <widget class="QFrame" name="shapeHoldTimeFrame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_shapeHold">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="shapeHoldTimeLabel">
+        <property name="text">
+         <string>Hold time</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="shapeHoldTimeSpinBox">
+        <property name="minimum">
+         <number>200</number>
+        </property>
+        <property name="maximum">
+         <number>2000</number>
+        </property>
+        <property name="singleStep">
+         <number>50</number>
+        </property>
+        <property name="value">
+         <number>600</number>
+        </property>
+        <property name="suffix">
+         <string> ms</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="shapeHoldSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>198</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>fineSlider</tabstop>
+  <tabstop>mediumSlider</tabstop>
+  <tabstop>strongSlider</tabstop>
+  <tabstop>circleCheckBox</tabstop>
+  <tabstop>circleSpinBox</tabstop>
+  <tabstop>pressureSensitiveCheckBox</tabstop>
+  <tabstop>shapeRecognitionComboBox</tabstop>
+  <tabstop>shapeHoldTimeSpinBox</tabstop>
+ </tabstops>
  <customwidgets>
   <customwidget>
    <class>UBCircleFrame</class>
