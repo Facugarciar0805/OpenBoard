@@ -21,10 +21,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Instala las dependencias necesarias con Homebrew
+      # 2. Instala las dependencias necesarias con Homebrew (sin auto-update lento)
       - name: Install dependencies via Homebrew
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
         run: |
-          brew update
           brew install qt@6 poppler quazip ffmpeg openssl@3 cmake ninja
 
       # 3. Configura y compila con CMake
