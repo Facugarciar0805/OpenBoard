@@ -1,0 +1,54 @@
+name: Build macOS Apple Silicon
+
+
+on: 
+  workflow_dispatch:
+
+  push:
+    tags:
+      - 'v*' 
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Apple Silicon (arm64)
+    runs-on: macos-14
+
+    steps:
+      # 1. Clona tu código en la máquina virtual
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # 2. Instala las dependencias necesarias con Homebrew
+      - name: Install dependencies via Homebrew
+        run: |
+          brew update
+          brew install qt@6 poppler quazip ffmpeg openssl@3 cmake ninja
+     # 3. Configura y compila con CMake
+      - name: Build with CMake
+        run: |
+          export PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig:/opt/homebrew/share/pkgconfig:/opt/homebrew/opt/openssl@3/lib/pkgconfig:$PKG_CONFIG_PATH"
+          cmake -S . -B build \
+            -DQT_VERSION=6 \
+            -DCMAKE_CXX_STANDARD=20 \
+            -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/qt6;/opt/homebrew"
+          cmake --build build -j$(sysctl -n hw.ncpu)
+      # 4. Empaqueta todo con el script que creamos recién
+      - name: Package portable .app and .zip
+        run: |
+          python3 release_scripts/osx/package_portable_mac.py OpenBoard-macOS-AppleSilicon.zip
+      # 5. Guarda el ZIP como artefacto descargable (y si es un tag, crea la Release)
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenBoard-macOS-AppleSilicon
+          path: build/OpenBoard-macOS-AppleSilicon.zip
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/OpenBoard-macOS-AppleSilicon.zip
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
